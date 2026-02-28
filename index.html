@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rooster &amp; Beschikbaarheid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">R&amp;B</div>
+      <span class="logo-text">Rooster &amp; Beschikbaarheid</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showView('dashboard')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" onclick="showView('teams')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Teams
+      </a>
+      <a class="nav-item" onclick="showView('medewerkers')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Medewerkers
+      </a>
+      <a class="nav-item" onclick="showView('beschikbaarheid')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Beschikbaarheid
+      </a>
+      <a class="nav-item" onclick="showView('rooster')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Werkroosters
+      </a>
+      <div class="nav-divider"></div>
+      <a class="nav-item" onclick="showView('uitleen')" href="#">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Uitleen / Inleen
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar">MG</div>
+      <div class="user-info">
+        <div class="user-name">Maria Garcia</div>
+        <div class="user-role">Manager</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="week-selector">
+          <button class="btn-icon" onclick="changeWeek(-1)">&#8249;</button>
+          <span id="week-label">Week 9 &mdash; 24 feb – 28 feb 2026</span>
+          <button class="btn-icon" onclick="changeWeek(1)">&#8250;</button>
+        </div>
+        <button class="btn btn-primary" onclick="showModal('registreer')">+ Registreer uren</button>
+      </div>
+    </header>
+
+    <!-- Views -->
+    <div id="view-dashboard" class="view active">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Totale bruto uren</div>
+          <div class="kpi-value">1.240</div>
+          <div class="kpi-sub">4 teams · 31 medewerkers</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Beschikbare uren</div>
+          <div class="kpi-value kpi-green">986</div>
+          <div class="kpi-sub">79,5% van bruto</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Niet beschikbaar</div>
+          <div class="kpi-value kpi-orange">254</div>
+          <div class="kpi-sub">Ziekte · Verlof · Project · Uitleen</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Lopende uitleningen</div>
+          <div class="kpi-value kpi-blue">3</div>
+          <div class="kpi-sub">medewerkers uitgeleend</div>
+        </div>
+      </div>
+
+      <div class="section-title">Teamoverzicht — huidige week</div>
+      <div class="card table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th class="right">Bruto uren</th>
+              <th class="right">Verlof</th>
+              <th class="right">Ziekte</th>
+              <th class="right">Projectinzet</th>
+              <th class="right">Uitleen (–)</th>
+              <th class="right">Inleen (+)</th>
+              <th class="right">Beschikbaar</th>
+              <th class="right">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="clickable" onclick="showView('teams'); selectTeam('alpha')">
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td class="right">320</td>
+              <td class="right text-orange">16</td>
+              <td class="right text-red">8</td>
+              <td class="right text-purple">24</td>
+              <td class="right text-orange">16</td>
+              <td class="right text-green">8</td>
+              <td class="right"><strong>264</strong></td>
+              <td class="right"><span class="pct pct-green">82,5%</span></td>
+            </tr>
+            <tr class="clickable" onclick="showView('teams'); selectTeam('beta')">
+              <td><span class="team-badge badge-green">Beta</span></td>
+              <td class="right">280</td>
+              <td class="right text-orange">24</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">16</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-green">16</td>
+              <td class="right"><strong>248</strong></td>
+              <td class="right"><span class="pct pct-green">88,6%</span></td>
+            </tr>
+            <tr class="clickable" onclick="showView('teams'); selectTeam('gamma')">
+              <td><span class="team-badge badge-purple">Gamma</span></td>
+              <td class="right">360</td>
+              <td class="right text-orange">32</td>
+              <td class="right text-red">16</td>
+              <td class="right text-purple">32</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-green">0</td>
+              <td class="right"><strong>272</strong></td>
+              <td class="right"><span class="pct pct-yellow">75,6%</span></td>
+            </tr>
+            <tr class="clickable" onclick="showView('teams'); selectTeam('delta')">
+              <td><span class="team-badge badge-orange">Delta</span></td>
+              <td class="right">280</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">8</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-green">8</td>
+              <td class="right"><strong>272</strong></td>
+              <td class="right"><span class="pct pct-green">97,1%</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Totaal</strong></td>
+              <td class="right"><strong>1.240</strong></td>
+              <td class="right"><strong>80</strong></td>
+              <td class="right"><strong>24</strong></td>
+              <td class="right"><strong>80</strong></td>
+              <td class="right"><strong>32</strong></td>
+              <td class="right"><strong>32</strong></td>
+              <td class="right"><strong>1.056</strong></td>
+              <td class="right"><span class="pct pct-green">85,2%</span></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="section-title" style="margin-top:32px;">Urenverdeling per type</div>
+      <div class="chart-row">
+        <div class="card chart-card">
+          <div class="chart-title">Niet-beschikbare uren — type</div>
+          <div class="bar-chart">
+            <div class="bar-item">
+              <div class="bar-label">Verlof</div>
+              <div class="bar-track"><div class="bar-fill bar-orange" style="width:43%"></div></div>
+              <div class="bar-value">80 u</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label">Projectinzet</div>
+              <div class="bar-track"><div class="bar-fill bar-purple" style="width:43%"></div></div>
+              <div class="bar-value">80 u</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label">Uitleen</div>
+              <div class="bar-track"><div class="bar-fill bar-blue" style="width:17%"></div></div>
+              <div class="bar-value">32 u</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label">Ziekte</div>
+              <div class="bar-track"><div class="bar-fill bar-red" style="width:13%"></div></div>
+              <div class="bar-value">24 u</div>
+            </div>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-title">Actieve uitleningen deze week</div>
+          <table class="data-table mini-table">
+            <thead>
+              <tr><th>Medewerker</th><th>Van team</th><th>Naar team</th><th class="right">Uren</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jan de Vries</td>
+                <td><span class="team-badge badge-blue">Alpha</span></td>
+                <td><span class="team-badge badge-green">Beta</span></td>
+                <td class="right">16</td>
+              </tr>
+              <tr>
+                <td>Sara Bakker</td>
+                <td><span class="team-badge badge-blue">Alpha</span></td>
+                <td><span class="team-badge badge-green">Beta</span></td>
+                <td class="right">8</td>
+              </tr>
+              <tr>
+                <td>Tom Visser</td>
+                <td><span class="team-badge badge-purple">Gamma</span></td>
+                <td><span class="team-badge badge-orange">Delta</span></td>
+                <td class="right">8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAMS VIEW -->
+    <div id="view-teams" class="view">
+      <div class="section-title">Team: Alpha</div>
+      <div class="card" style="padding:20px 24px; margin-bottom:24px;">
+        <div class="team-header-row">
+          <div>
+            <div class="field-label">Manager</div>
+            <div>Maria Garcia</div>
+          </div>
+          <div>
+            <div class="field-label">Aantal medewerkers</div>
+            <div>8</div>
+          </div>
+          <div>
+            <div class="field-label">Bruto uren / week</div>
+            <div>320</div>
+          </div>
+          <div>
+            <div class="field-label">Beschikbaar deze week</div>
+            <div class="kpi-green" style="font-weight:700">264 u (82,5%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="card-header-row">
+          <div class="card-title">Medewerkers</div>
+          <button class="btn btn-secondary" onclick="showModal('medewerker')">+ Medewerker toevoegen</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Naam</th>
+              <th class="right">Contract u/week</th>
+              <th class="right">Verlof</th>
+              <th class="right">Ziekte</th>
+              <th class="right">Project</th>
+              <th class="right">Uitleen</th>
+              <th class="right">Inleen</th>
+              <th class="right">Netto beschikbaar</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="clickable" onclick="showView('medewerkers'); selectMedewerker('jandevries')">
+              <td><div class="emp-cell"><div class="emp-avatar">JV</div>Jan de Vries</div></td>
+              <td class="right">40</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">8</td>
+              <td class="right text-orange">16</td>
+              <td class="right text-green">0</td>
+              <td class="right"><strong>16</strong></td>
+              <td class="right"><button class="btn btn-xs btn-secondary" onclick="event.stopPropagation(); showModal('registreer')">+ Uren</button></td>
+            </tr>
+            <tr class="clickable" onclick="showView('medewerkers')">
+              <td><div class="emp-cell"><div class="emp-avatar">SB</div>Sara Bakker</div></td>
+              <td class="right">32</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">0</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-green">0</td>
+              <td class="right"><strong>16</strong></td>
+              <td class="right"><button class="btn btn-xs btn-secondary" onclick="event.stopPropagation(); showModal('registreer')">+ Uren</button></td>
+            </tr>
+            <tr class="clickable" onclick="showView('medewerkers')">
+              <td><div class="emp-cell"><div class="emp-avatar">PK</div>Pieter Klaassen</div></td>
+              <td class="right">40</td>
+              <td class="right text-orange">8</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">16</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-green">0</td>
+              <td class="right"><strong>16</strong></td>
+              <td class="right"><button class="btn btn-xs btn-secondary" onclick="event.stopPropagation(); showModal('registreer')">+ Uren</button></td>
+            </tr>
+            <tr class="clickable" onclick="showView('medewerkers')">
+              <td><div class="emp-cell"><div class="emp-avatar">LM</div>Lisa Mulder</div></td>
+              <td class="right">36</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-red">8</td>
+              <td class="right text-purple">0</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-green">8</td>
+              <td class="right"><strong>36</strong></td>
+              <td class="right"><button class="btn btn-xs btn-secondary" onclick="event.stopPropagation(); showModal('registreer')">+ Uren</button></td>
+            </tr>
+            <tr class="clickable" onclick="showView('medewerkers')">
+              <td><div class="emp-cell"><div class="emp-avatar">RN</div>Ruben Nijholt</div></td>
+              <td class="right">40</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-red">0</td>
+              <td class="right text-purple">0</td>
+              <td class="right text-orange">0</td>
+              <td class="right text-green">0</td>
+              <td class="right"><strong>40</strong></td>
+              <td class="right"><button class="btn btn-xs btn-secondary" onclick="event.stopPropagation(); showModal('registreer')">+ Uren</button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Totaal team Alpha</strong></td>
+              <td class="right"><strong>188</strong></td>
+              <td class="right"><strong>16</strong></td>
+              <td class="right"><strong>8</strong></td>
+              <td class="right"><strong>24</strong></td>
+              <td class="right"><strong>24</strong></td>
+              <td class="right"><strong>8</strong></td>
+              <td class="right"><strong>124</strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- MEDEWERKERS VIEW -->
+    <div id="view-medewerkers" class="view">
+      <div class="employee-detail">
+        <div class="card emp-profile-card">
+          <div class="emp-profile-header">
+            <div class="emp-avatar large">JV</div>
+            <div>
+              <div class="emp-name">Jan de Vries</div>
+              <div class="emp-meta">Team Alpha &middot; Medewerker</div>
+            </div>
+            <button class="btn btn-secondary" style="margin-left:auto" onclick="showModal('brutouren')">Bruto uren &amp; rooster</button>
+          </div>
+          <div class="emp-stats">
+            <div class="emp-stat">
+              <div class="field-label">Contract</div>
+              <div class="stat-val">40 u/week</div>
+            </div>
+            <div class="emp-stat">
+              <div class="field-label">Ma-Vr</div>
+              <div class="stat-val">8 u/dag</div>
+            </div>
+            <div class="emp-stat">
+              <div class="field-label">Beschikbaar deze week</div>
+              <div class="stat-val kpi-green">16 u</div>
+            </div>
+            <div class="emp-stat">
+              <div class="field-label">Niet beschikbaar</div>
+              <div class="stat-val kpi-orange">24 u</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-calendar card">
+          <div class="card-header-row">
+            <div class="card-title">Week 9 — dagweergave</div>
+            <button class="btn btn-primary" onclick="showModal('registreer')">+ Uren registreren</button>
+          </div>
+          <table class="cal-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Ma 24 feb</th>
+                <th>Di 25 feb</th>
+                <th>Wo 26 feb</th>
+                <th>Do 27 feb</th>
+                <th>Vr 28 feb</th>
+                <th class="right">Totaal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-bruto">
+                <td>Bruto uren</td>
+                <td>8</td><td>8</td><td>8</td><td>8</td><td>8</td>
+                <td class="right"><strong>40</strong></td>
+              </tr>
+              <tr class="row-verlof">
+                <td><span class="type-dot dot-orange"></span> Verlof</td>
+                <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+                <td class="right">0</td>
+              </tr>
+              <tr class="row-ziekte">
+                <td><span class="type-dot dot-red"></span> Ziekte</td>
+                <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+                <td class="right">0</td>
+              </tr>
+              <tr class="row-project">
+                <td><span class="type-dot dot-purple"></span> Projectinzet</td>
+                <td>—</td><td>—</td><td>8</td><td>—</td><td>—</td>
+                <td class="right">8</td>
+              </tr>
+              <tr class="row-uitleen">
+                <td><span class="type-dot dot-blue"></span> Uitleen → Beta</td>
+                <td>8</td><td>8</td><td>—</td><td>—</td><td>—</td>
+                <td class="right">16</td>
+              </tr>
+              <tr class="row-beschikbaar">
+                <td><strong>Netto beschikbaar</strong></td>
+                <td><strong>0</strong></td>
+                <td><strong>0</strong></td>
+                <td><strong>0</strong></td>
+                <td><strong>8</strong></td>
+                <td><strong>8</strong></td>
+                <td class="right"><strong>16</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="cal-legend">
+            <span class="legend-item"><span class="type-dot dot-orange"></span> Verlof</span>
+            <span class="legend-item"><span class="type-dot dot-red"></span> Ziekte</span>
+            <span class="legend-item"><span class="type-dot dot-purple"></span> Projectinzet</span>
+            <span class="legend-item"><span class="type-dot dot-blue"></span> Uitleen</span>
+            <span class="legend-item"><span class="type-dot dot-green"></span> Inleen</span>
+          </div>
+        </div>
+
+        <div class="card history-card">
+          <div class="card-title" style="margin-bottom:16px">Registratiehistorie</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Week</th><th>Type</th><th>Uren</th><th>Omschrijving</th><th>Naar/Van team</th><th>Geregistreerd door</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>W9 2026</td>
+                <td><span class="badge badge-blue-soft">Uitleen</span></td>
+                <td>16</td>
+                <td>Ondersteuning migratie</td>
+                <td><span class="team-badge badge-green">Beta</span></td>
+                <td>Maria Garcia</td>
+              </tr>
+              <tr>
+                <td>W9 2026</td>
+                <td><span class="badge badge-purple-soft">Projectinzet</span></td>
+                <td>8</td>
+                <td>Architectuur review</td>
+                <td>—</td>
+                <td>Jan de Vries</td>
+              </tr>
+              <tr>
+                <td>W8 2026</td>
+                <td><span class="badge badge-orange-soft">Verlof</span></td>
+                <td>16</td>
+                <td>Vakantie</td>
+                <td>—</td>
+                <td>Jan de Vries</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BESCHIKBAARHEID VIEW -->
+    <div id="view-beschikbaarheid" class="view">
+      <div class="section-title">Beschikbaarheidsoverzicht — Week 9</div>
+      <div class="filter-bar card">
+        <div class="filter-item">
+          <label class="field-label">Team</label>
+          <select class="form-select">
+            <option>Alle teams</option>
+            <option selected>Alpha</option>
+            <option>Beta</option>
+            <option>Gamma</option>
+            <option>Delta</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="field-label">Type</label>
+          <select class="form-select">
+            <option>Alle types</option>
+            <option>Verlof</option>
+            <option>Ziekte</option>
+            <option>Projectinzet</option>
+            <option>Uitleen</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary">Toepassen</button>
+      </div>
+
+      <div class="card table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Medewerker</th>
+              <th>Team</th>
+              <th>Type</th>
+              <th>Week</th>
+              <th class="right">Ma</th>
+              <th class="right">Di</th>
+              <th class="right">Wo</th>
+              <th class="right">Do</th>
+              <th class="right">Vr</th>
+              <th class="right">Totaal</th>
+              <th>Omschrijving</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">JV</div>Jan de Vries</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="badge badge-blue-soft">Uitleen → Beta</span></td>
+              <td>W9</td>
+              <td class="right">8</td><td class="right">8</td><td class="right">—</td><td class="right">—</td><td class="right">—</td>
+              <td class="right"><strong>16</strong></td>
+              <td>Ondersteuning migratie</td>
+              <td><button class="btn btn-xs btn-danger">Verwijder</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">JV</div>Jan de Vries</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="badge badge-purple-soft">Projectinzet</span></td>
+              <td>W9</td>
+              <td class="right">—</td><td class="right">—</td><td class="right">8</td><td class="right">—</td><td class="right">—</td>
+              <td class="right"><strong>8</strong></td>
+              <td>Architectuur review</td>
+              <td><button class="btn btn-xs btn-danger">Verwijder</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">SB</div>Sara Bakker</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="badge badge-orange-soft">Verlof</span></td>
+              <td>W9</td>
+              <td class="right">8</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td>
+              <td class="right"><strong>8</strong></td>
+              <td>Vakantie</td>
+              <td><button class="btn btn-xs btn-danger">Verwijder</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">PK</div>Pieter Klaassen</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="badge badge-purple-soft">Projectinzet</span></td>
+              <td>W9</td>
+              <td class="right">—</td><td class="right">8</td><td class="right">8</td><td class="right">—</td><td class="right">—</td>
+              <td class="right"><strong>16</strong></td>
+              <td>Q1 release</td>
+              <td><button class="btn btn-xs btn-danger">Verwijder</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">LM</div>Lisa Mulder</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="badge badge-red-soft">Ziekte</span></td>
+              <td>W9</td>
+              <td class="right">8</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td>
+              <td class="right"><strong>8</strong></td>
+              <td>Ziek gemeld</td>
+              <td><button class="btn btn-xs btn-danger">Verwijder</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROOSTER VIEW -->
+    <div id="view-rooster" class="view">
+      <div class="section-title">Werkroosters beheren</div>
+      <div class="card table-card">
+        <div class="card-header-row">
+          <div class="card-title">Werkschema per medewerker</div>
+          <button class="btn btn-primary" onclick="showModal('brutouren')">+ Schema aanpassen</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Medewerker</th>
+              <th>Team</th>
+              <th class="right">Contract u/w</th>
+              <th class="center">Ma</th>
+              <th class="center">Di</th>
+              <th class="center">Wo</th>
+              <th class="center">Do</th>
+              <th class="center">Vr</th>
+              <th class="center">Za</th>
+              <th class="center">Zo</th>
+              <th>Ingangsdatum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">JV</div>Jan de Vries</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td class="right">40</td>
+              <td class="center">8u</td><td class="center">8u</td><td class="center">8u</td><td class="center">8u</td><td class="center">8u</td>
+              <td class="center text-muted">—</td><td class="center text-muted">—</td>
+              <td>01-01-2026</td>
+              <td><button class="btn btn-xs btn-secondary" onclick="showModal('brutouren')">Bewerk</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">SB</div>Sara Bakker</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td class="right">32</td>
+              <td class="center">8u</td><td class="center">8u</td><td class="center">8u</td><td class="center">8u</td>
+              <td class="center text-muted">—</td><td class="center text-muted">—</td><td class="center text-muted">—</td>
+              <td>01-01-2026</td>
+              <td><button class="btn btn-xs btn-secondary" onclick="showModal('brutouren')">Bewerk</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">PK</div>Pieter Klaassen</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td class="right">40</td>
+              <td class="center">8u</td><td class="center">8u</td><td class="center">8u</td><td class="center">8u</td><td class="center">8u</td>
+              <td class="center text-muted">—</td><td class="center text-muted">—</td>
+              <td>01-03-2026</td>
+              <td><button class="btn btn-xs btn-secondary" onclick="showModal('brutouren')">Bewerk</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- UITLEEN VIEW -->
+    <div id="view-uitleen" class="view">
+      <div class="section-title">Uitleen &amp; Inleen overzicht</div>
+      <div class="uitleen-kpi">
+        <div class="kpi-card">
+          <div class="kpi-label">Actieve uitleningen</div>
+          <div class="kpi-value kpi-blue">3</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Totaal uitgeleende uren (week)</div>
+          <div class="kpi-value kpi-orange">32</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Betrokken teams</div>
+          <div class="kpi-value">3</div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="card-title" style="margin-bottom:16px">Actieve uitleningen</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Medewerker</th>
+              <th>Uitlenend team</th>
+              <th>Ontvangend team</th>
+              <th>Week</th>
+              <th class="right">Uren</th>
+              <th>Omschrijving</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">JV</div>Jan de Vries</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="team-badge badge-green">Beta</span></td>
+              <td>W9 2026</td>
+              <td class="right">16</td>
+              <td>Ondersteuning migratie</td>
+              <td><span class="status-badge status-active">Actief</span></td>
+              <td><button class="btn btn-xs btn-secondary">Detail</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">SB</div>Sara Bakker</div></td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td><span class="team-badge badge-green">Beta</span></td>
+              <td>W9 2026</td>
+              <td class="right">8</td>
+              <td>Review documenten</td>
+              <td><span class="status-badge status-active">Actief</span></td>
+              <td><button class="btn btn-xs btn-secondary">Detail</button></td>
+            </tr>
+            <tr>
+              <td><div class="emp-cell"><div class="emp-avatar sm">TV</div>Tom Visser</div></td>
+              <td><span class="team-badge badge-purple">Gamma</span></td>
+              <td><span class="team-badge badge-orange">Delta</span></td>
+              <td>W9 2026</td>
+              <td class="right">8</td>
+              <td>Testondersteuning</td>
+              <td><span class="status-badge status-active">Actief</span></td>
+              <td><button class="btn btn-xs btn-secondary">Detail</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card table-card" style="margin-top:24px">
+        <div class="card-title" style="margin-bottom:16px">Inleen per team (deze week)</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Ontvangend team</th>
+              <th>Ingeleende medewerker</th>
+              <th>Van team</th>
+              <th class="right">Uren</th>
+              <th>Effect op capaciteit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="team-badge badge-green">Beta</span></td>
+              <td>Jan de Vries + Sara Bakker</td>
+              <td><span class="team-badge badge-blue">Alpha</span></td>
+              <td class="right">24</td>
+              <td><span class="pct pct-green">+8,6% capaciteit</span></td>
+            </tr>
+            <tr>
+              <td><span class="team-badge badge-orange">Delta</span></td>
+              <td>Tom Visser</td>
+              <td><span class="team-badge badge-purple">Gamma</span></td>
+              <td class="right">8</td>
+              <td><span class="pct pct-green">+2,9% capaciteit</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: Uren registreren -->
+  <div id="modal-registreer" class="modal-overlay" onclick="closeModal('registreer')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Uren registreren</div>
+        <button class="modal-close" onclick="closeModal('registreer')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Medewerker</label>
+            <select class="form-select" onchange="toggleUitleenTeam(this)">
+              <option>Jan de Vries (Alpha)</option>
+              <option>Sara Bakker (Alpha)</option>
+              <option>Pieter Klaassen (Alpha)</option>
+              <option>Lisa Mulder (Alpha)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label">Type niet-beschikbaarheid</label>
+            <select class="form-select" id="type-select" onchange="toggleUitleenTeam(this)">
+              <option value="verlof">Verlof</option>
+              <option value="ziekte">Ziekte</option>
+              <option value="project">Projectinzet</option>
+              <option value="uitleen">Uitleen aan ander team</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" id="uitleen-team-row" style="display:none">
+          <div class="form-group">
+            <label class="field-label">Uitleen naar team</label>
+            <select class="form-select">
+              <option>Beta</option>
+              <option>Gamma</option>
+              <option>Delta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label">Omschrijving uitleen</label>
+            <input class="form-input" type="text" placeholder="bijv. Ondersteuning migratie" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Week</label>
+          <input class="form-input" type="week" value="2026-W09" />
+        </div>
+        <div class="day-grid">
+          <div class="field-label" style="grid-column:1/-1">Uren per dag</div>
+          <div class="day-input-group">
+            <label class="day-label">Ma</label>
+            <input class="form-input day-input" type="number" min="0" max="24" value="0" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Di</label>
+            <input class="form-input day-input" type="number" min="0" max="24" value="0" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Wo</label>
+            <input class="form-input day-input" type="number" min="0" max="24" value="0" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Do</label>
+            <input class="form-input day-input" type="number" min="0" max="24" value="0" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Vr</label>
+            <input class="form-input day-input" type="number" min="0" max="24" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Omschrijving (optioneel)</label>
+          <input class="form-input" type="text" placeholder="bijv. Vakantie Spanje" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('registreer')">Annuleren</button>
+        <button class="btn btn-primary" onclick="closeModal('registreer')">Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Bruto uren & rooster -->
+  <div id="modal-brutouren" class="modal-overlay" onclick="closeModal('brutouren')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Bruto uren &amp; werkrooster</div>
+        <button class="modal-close" onclick="closeModal('brutouren')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Medewerker</label>
+            <select class="form-select">
+              <option>Jan de Vries</option>
+              <option>Sara Bakker</option>
+              <option>Pieter Klaassen</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label">Contract uren per week (bruto)</label>
+            <input class="form-input" type="number" value="40" min="0" max="60" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Ingangsdatum rooster</label>
+          <input class="form-input" type="date" value="2026-01-01" />
+        </div>
+        <div class="section-title" style="margin:16px 0 12px">Werkdagen &amp; daguren</div>
+        <div class="day-grid">
+          <div class="day-input-group">
+            <label class="day-label">Ma</label>
+            <input class="form-input day-input" type="number" value="8" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Di</label>
+            <input class="form-input day-input" type="number" value="8" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Wo</label>
+            <input class="form-input day-input" type="number" value="8" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Do</label>
+            <input class="form-input day-input" type="number" value="8" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Vr</label>
+            <input class="form-input day-input" type="number" value="8" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Za</label>
+            <input class="form-input day-input" type="number" value="0" min="0" max="12" />
+          </div>
+          <div class="day-input-group">
+            <label class="day-label">Zo</label>
+            <input class="form-input day-input" type="number" value="0" min="0" max="12" />
+          </div>
+        </div>
+        <div class="info-box">
+          Totaal ingevoerd: <strong>40 uur/week</strong> &mdash; komt overeen met contracturen.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('brutouren')">Annuleren</button>
+        <button class="btn btn-primary" onclick="closeModal('brutouren')">Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Medewerker toevoegen -->
+  <div id="modal-medewerker" class="modal-overlay" onclick="closeModal('medewerker')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Medewerker toevoegen</div>
+        <button class="modal-close" onclick="closeModal('medewerker')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Voornaam</label>
+            <input class="form-input" type="text" placeholder="Voornaam" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Achternaam</label>
+            <input class="form-input" type="text" placeholder="Achternaam" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Team</label>
+            <select class="form-select">
+              <option>Alpha</option>
+              <option>Beta</option>
+              <option>Gamma</option>
+              <option>Delta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label">Rol</label>
+            <select class="form-select">
+              <option>Medewerker</option>
+              <option>Manager</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Contract uren/week</label>
+            <input class="form-input" type="number" value="40" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Startdatum</label>
+            <input class="form-input" type="date" value="2026-03-01" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('medewerker')">Annuleren</button>
+        <button class="btn btn-primary" onclick="closeModal('medewerker')">Toevoegen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
