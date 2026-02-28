@@ -438,6 +438,7 @@ body {
 .row-ziekte td { color: var(--os-red); }
 .row-project td { color: var(--os-purple); }
 .row-uitleen td { color: var(--os-primary); }
+.row-inleen td { color: var(--os-green); }
 .row-beschikbaar td { background: var(--os-green-light); color: #0D8A5E; font-weight: 700; border-top: 2px solid var(--os-green); }
 
 .type-dot {
